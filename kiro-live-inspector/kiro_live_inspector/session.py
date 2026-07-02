@@ -28,6 +28,14 @@ class InspectorSession:
         with self._lock:
             self._records.append(record)
 
+    def upsert_record(self, record: LlmRequestRecord) -> None:
+        with self._lock:
+            for index, existing in enumerate(self._records):
+                if existing.request_number == record.request_number:
+                    self._records[index] = record
+                    return
+            self._records.append(record)
+
     def records(self) -> list[LlmRequestRecord]:
         with self._lock:
             return list(self._records)
@@ -96,4 +104,3 @@ class SessionSnapshot:
         self.current_provider = current_provider
         self.current_model = current_model
         self.latest = latest
-

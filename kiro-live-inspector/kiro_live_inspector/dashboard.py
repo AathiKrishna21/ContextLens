@@ -59,6 +59,7 @@ class LiveDashboard:
             for name in (
                 "Provider",
                 "Model",
+                "Status",
                 "Context",
                 "Prompt",
                 "Completion",
@@ -75,6 +76,7 @@ class LiveDashboard:
         context_percent = latest.context_usage_percent
         table.add_row("Provider", latest.provider.value)
         table.add_row("Model", latest.model)
+        table.add_row("Status", latest.error or str(latest.status_code or "-"))
         table.add_row(
             "Context",
             f"{context_percent:.1f}% " + self._bar(context_percent),
@@ -132,6 +134,7 @@ class LiveDashboard:
         table.add_column("Cost", justify="right")
         table.add_column("Provider")
         table.add_column("Model")
+        table.add_column("URL")
 
         for record in self._session.records()[-20:]:
             table.add_row(
@@ -143,6 +146,7 @@ class LiveDashboard:
                 f"${record.estimated_cost_usd:.4f}",
                 record.provider.value,
                 record.model,
+                record.url[:64],
             )
         return table
 
